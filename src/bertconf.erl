@@ -1,7 +1,8 @@
 -module(bertconf).
 -behaviour(application).
 -export([start/2, stop/1]).
--export([read/2, all/1, version/1, version/2]).
+-export([read/2, all/1, version/1, version/2, table/1]).
+
 -define(TABLE, bertconf_bert_loader).
 -define(MATCH_LIMIT, 500).
 -include("bertconf.hrl").
@@ -42,10 +43,12 @@ version(NameSpace, {vsn, Version}) ->
         _ -> old
     end.
 
-%%% PRIVATE
+-spec table(namespace()) -> any().
 table(NameSpace) ->
     [#tab{id=Tid}] = ets:lookup(?TABLE, NameSpace),
     Tid.
+
+%%% PRIVATE
 
 loop_all('$end_of_table') ->
     [];

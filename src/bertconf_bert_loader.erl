@@ -51,6 +51,12 @@ reload_bert(OldChanges) ->
                       {ok, Bin} <- [file:read_file(File)],
                       {ok, Terms} <- [bertconf_lib:decode(Bin)]],
     NewTables = store(merge(lists:sort(lists:flatten(Terms)))),
+
+    case NewTables of
+        [] -> ok;
+        _ -> lager:info("Loaded bertconf tables: ~p", [[Tab#tab.name || Tab <- NewTables]])
+    end,
+
     OldTables = update_table_index(NewTables),
     NewChanges = lists:append([Refs || {_, Refs} <- Changes]),
     {OldTables, NewChanges}.
