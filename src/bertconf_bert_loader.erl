@@ -70,8 +70,15 @@ reload_delay() ->
 find_dirs() ->
     case application:get_env(bertconf, dir) of
         undefined -> [];
-        {ok, Val} -> Val
+        {ok, Val} -> [resolve_dir(Entry) || Entry <- Val]
     end.
+
+resolve_dir({priv, App, Val}) ->
+    PrivDir = code:priv_dir(App),
+    filename:join(PrivDir, Val);
+resolve_dir(Val) ->
+    Val.
+
 
 merge([]) -> [];
 merge([Table]) -> [Table];
